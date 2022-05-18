@@ -4,7 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.telephony.SmsMessage
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity(), MessageListener {
@@ -30,7 +31,8 @@ class MainActivity : AppCompatActivity(), MessageListener {
         }
     }
 
-    override fun messageReceived(message: String?) {
-        Toast.makeText(this, message , Toast.LENGTH_LONG).show()
+    override fun messageReceived(msg: SmsMessage?) {
+        val messageText: TextView = findViewById(R.id.message)
+        messageText.text = msg?.displayMessageBody
     }
 }

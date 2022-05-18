@@ -19,7 +19,7 @@ class MessageReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             for (sms in Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                mListener!!.messageReceived("Remetente: ${sms.displayOriginatingAddress}, Mensagem: ${sms.displayMessageBody}, Data: ${Date(sms.timestampMillis)}")
+                mListener!!.messageReceived(sms)
             }
         }
     }
