@@ -1,19 +1,13 @@
 package com.gabrielsantana.smslistener
 
 import android.Manifest
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Telephony
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MessageListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -21,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS), 111)
         } else {
-            receiveMsg()
+            MessageReceiver.bindListener(this)
         }
     }
 
@@ -32,20 +26,11 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            receiveMsg()
+            MessageReceiver.bindListener(this)
         }
     }
 
-    private fun receiveMsg() {
-        var br = object: BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    for (sms in Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                        Toast.makeText(applicationContext, sms.displayMessageBody , Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
-        registerReceiver(br, IntentFilter("android.provider.Telephony.SMS_RECEIVED"))
+    override fun messageReceived(message: String?) {
+        Toast.makeText(this, message , Toast.LENGTH_LONG).show()
     }
 }
